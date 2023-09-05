@@ -1,9 +1,13 @@
 # Acender 3 leds 
 
-- Acender 3 leds atráves do uso dos registradores internos do microcontrolador ATMEGA 328p do arduino uno
+- Acender 3 leds atráves do uso dos registradores internos do microcontrolador ATMEGA 328p do arduino uno.
 
 a simulação foi desenvlvida pelo tinkercad e foi obtido o seguinte esquema da montagem do circuito no arduino uno:
+<p  aling="center">
+
 ![esquema da montagem do circuito no arduino](https://github.com/CarlosG18/sd_dca0919/blob/main/exemples/exemple1/esquema1.png)
+</p>
+
 
 o código ultilizado foi o seguinte:
 
