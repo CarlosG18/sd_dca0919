@@ -10,3 +10,6 @@ implementações realizada na disciplina de sistemas digitais - DCA0919 - UFRN
 - PORTx: comando para escrever nos pinos do registrador "x";
 - PINx:
 ```
+## exemplo prático: 
+[Acender 3 leds atráves do uso dos registradores internos do microcontrolador ATMEGA 328p do arduino uno
+]()
