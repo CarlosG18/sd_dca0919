@@ -4,8 +4,7 @@
 
 a simulação foi desenvlvida pelo tinkercad e foi obtido o seguinte esquema da montagem do circuito no arduino uno:
 <p  aling="center">
-
-![esquema da montagem do circuito no arduino](https://github.com/CarlosG18/sd_dca0919/blob/main/exemples/exemple1/esquema1.png)
+  <img src="https://github.com/CarlosG18/sd_dca0919/blob/main/exemples/exemple1/esquema1.png" alt="esquema do circuito no arduino">
 </p>
 
 
