@@ -11,5 +11,4 @@ implementações realizada na disciplina de sistemas digitais - DCA0919 - UFRN
 - PINx:
 ```
 ## exemplos práticos: 
-- [Acender 3 leds atráves do uso dos registradores internos do microcontrolador ATMEGA 328p do arduino uno
-]()
+- [Acender 3 leds](https://github.com/CarlosG18/sd_dca0919/blob/main/exemples/exemple1/exemple1.md)
