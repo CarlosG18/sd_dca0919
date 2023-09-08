@@ -12,4 +12,5 @@ detalhes sobre o `datasheet` do ATMEGA2560 (pinout, arquitetura interna, perifer
 - PORTx: comando para escrever nos pinos do registrador "x";
 ```
 ## exemplos práticos: 
-- [Acender 3 leds](https://github.com/CarlosG18/sd_dca0919/blob/main/exemples/exemple1/exemple1.md)
+- [Acender 3 leds](https://github.com/CarlosG18/sd_dca0919/blob/main/examples/example1/example1.md)
+- [Semáfaro](https://github.com/CarlosG18/sd_dca0919/blob/main/examples/example2/example2.md)

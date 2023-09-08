@@ -1,0 +1,26 @@
+EXPLICAÇÂO DA EQUIVALÊNCIA DOS COMANDOS
+
+- os comandos `pinMode(LedRed, OUTPUT),pinMode(LedYellow, OUTPUT) e pinMode(LedGreen, OUTPUT)` é equivalente ao `DDRD = 0x1c`
+como os pinos (2,3,4) do arduino corresponde aos pinos 2,3 e 4 (PD2,PD3 e PD4)
+do registrador D do microcontrolador do arduino uno(328p), devemos configurar os
+os pinos do registrador D com 00011100 (em hexa 0x1c), onde entradas são dadas pelo 
+bit 0 e as saidas pelo bit 1, por isso usamos o comando DDRD = 0x1c que é 
+equivalente aos comandos pinMode(LedRed, OUTPUT)...
+
+- o comando  `digitalWrite(LedRed, HIGH)` é equivalente ao `PORTD = 0x4`
+o comando PORTD escreverá nos pinos do registrador D, neste caso 00000100 
+(em hexa 0x4), fazendo com que o led que esta conectado ao pino 2 do 
+microcontrolador seja ligado(HIGH).
+
+- o comando `digitalWrite(LedGreen, HIGH)` é equivalente ao `PORTD = 0x10`
+de maneira semelhante, o PORTD = 0x10 irá escrever (00010000) no registrador D,
+fazendo com que o led verde que esta conectado ao pino 4 do registrador D do 
+microcontrolador seja ligado(HIGH).
+
+- o comando `digitalWrite(LedYellow, HIGH)` é equivalente ao `PORTD = 0x8`
+mesma lógica, porém escrevendo 00001000 no registrador D usando PORTD = 0x8 e 
+ligando o led amarelo que esta no pino 3 do registrador D.
+
+- o comando `digitalWrite(LedRed, LOW)` é equivalente ao `PORTD = 0x0`
+neste caso o comando PORTD irá escrever em todos os pinos do registrador 
+D o bit 0 (LOW)
