@@ -16,4 +16,4 @@ pinos do registrador "x".
 ## exemplos práticos: 
 - [Acender 3 leds](https://github.com/CarlosG18/sd_dca0919/blob/main/examples/example1/example1.md)
 - [Semáfaro](https://github.com/CarlosG18/sd_dca0919/blob/main/examples/example2/example2.md)
-- [Acender led atráves de um botão](https://github.com/CarlosG18/sd_dca0919/blob/main/examples/example2/example3.md)
+- [Acender led atráves de um botão](https://github.com/CarlosG18/sd_dca0919/blob/main/examples/example3/example3.md)
