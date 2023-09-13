@@ -8,7 +8,7 @@ void setup()
 void loop()
 {
   while(digitalRead(3)){
-	digitalWrite(2, HIGH);
+	  digitalWrite(2, HIGH);
   }
   digitalWrite(2, LOW);
 }
