@@ -12,11 +12,11 @@ registradores.
 ## Montagem do circuito
 
 <p align="center">
-  <img src="https://github.com/CarlosG18/sd_dca0919/blob/main/exemples/example3/esquema3.png" alt="esquema do circuito no arduino">
+  <img src="https://github.com/CarlosG18/sd_dca0919/blob/main/examples/example3/esquema3.png" alt="esquema do circuito no arduino">
 </p>
 
 ## funcionamento de um push button
 
 <p align="center">
-  <img src="https://github.com/CarlosG18/sd_dca0919/blob/main/exemples/example3/PushButton_esquema.png" alt="esquema de funcionamento de um pushButton">
+  <img src="https://github.com/CarlosG18/sd_dca0919/blob/main/examples/example3/PushButton_esquema.png" alt="esquema de funcionamento de um pushButton">
 </p>
