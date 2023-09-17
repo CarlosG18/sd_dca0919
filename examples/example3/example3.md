@@ -20,3 +20,5 @@ registradores.
 <p align="center">
   <img src="https://github.com/CarlosG18/sd_dca0919/blob/main/examples/example3/PushButton_esquema.png" alt="esquema de funcionamento de um pushButton">
 </p>
+
+

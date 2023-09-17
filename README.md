@@ -17,3 +17,4 @@ pinos do registrador "x".
 - [Acender 3 leds](https://github.com/CarlosG18/sd_dca0919/blob/main/examples/example1/example1.md)
 - [Semáfaro](https://github.com/CarlosG18/sd_dca0919/blob/main/examples/example2/example2.md)
 - [Acender led atráves de um botão](https://github.com/CarlosG18/sd_dca0919/blob/main/examples/example3/example3.md)
+- [Contador 0-9 em um display 7 segmentos com butão](https://github.com/CarlosG18/sd_dca0919/blob/main/examples/example4/example4.md)
