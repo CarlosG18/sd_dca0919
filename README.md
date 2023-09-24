@@ -83,3 +83,4 @@ ISR(INT0_vect){
 - [Acender led atráves de um botão](https://github.com/CarlosG18/sd_dca0919/blob/main/examples/example3/example3.md)
 - [Timer de 0-9 em um display 7 segmentos com butão](https://github.com/CarlosG18/sd_dca0919/blob/main/examples/example4/example4.md)
 - [contador de 0-9 com um botão e um reset](https://github.com/CarlosG18/sd_dca0919/blob/main/examples/example5/example5.md)
+- [piscando um led com o temporizador interno do microcontrolador](https://github.com/CarlosG18/sd_dca0919/blob/main/examples/example6/example6.md)
