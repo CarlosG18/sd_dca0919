@@ -6,8 +6,8 @@ implementações realizada na disciplina de sistemas digitais - DCA0919 - Engenh
 **conteudos:**
 - [I/O](https://github.com/CarlosG18/sd_dca0919/blob/main/conteudos/io.md)
 - [Interrupções](https://github.com/CarlosG18/sd_dca0919/blob/main/conteudos/interrupcao.md)
-- [PWM]()
-- [AC/DC]()
+- [PWM](https://github.com/CarlosG18/sd_dca0919/blob/main/conteudos/pwm.md)
+- [AC/DC](https://github.com/CarlosG18/sd_dca0919/blob/main/conteudos/ac_dc.md)
 
 ## exemplos práticos: 
 - [Acender 3 leds](https://github.com/CarlosG18/sd_dca0919/blob/main/examples/example1/example1.md)
