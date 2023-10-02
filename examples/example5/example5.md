@@ -12,3 +12,5 @@ contagem e A2 para zerar o valor do display.
 <p align="center">
   <img src="https://github.com/CarlosG18/sd_dca0919/blob/main/examples/example5/esquema5.png" alt="esquema do circuito no arduino">
 </p>
+
+[link para a simulação no tinkercad](https://www.tinkercad.com/things/7SQMmfjdAbY-contador)

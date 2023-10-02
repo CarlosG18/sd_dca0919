@@ -26,3 +26,5 @@ equivalentes.
 - o comando `digitalWrite(LedRed, LOW)` é equivalente ao `PORTD = 0x0`
 - o comando `digitalWrite(LedGreen, HIGH)` é equivalente ao `PORTD = 0x10`
 - o comando `digitalWrite(LedYellow, HIGH)` é equivalente ao `PORTD = 0x8`
+
+[link para a simulação no tinkercad](https://www.tinkercad.com/things/a3BAULm2WDz-semafaro-v2)

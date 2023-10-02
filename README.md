@@ -1,11 +1,12 @@
 # sd_dca0919
 implementações realizada na disciplina de sistemas digitais - DCA0919 - Engenharia da Computação - UFRN
 
-# programando com o microcontrolador ATMEGA2560 na plataforma arduino
+# programando com o microcontrolador ATMEGA2560/ATMEGA328p na plataforma arduino
 
 **conteudos:**
 - [I/O](https://github.com/CarlosG18/sd_dca0919/blob/main/conteudos/io.md)
 - [Interrupções](https://github.com/CarlosG18/sd_dca0919/blob/main/conteudos/interrupcao.md)
+- [Temporizadores e contadores](https://github.com/CarlosG18/sd_dca0919/blob/main/conteudos/contador_temp.md)
 - [PWM](https://github.com/CarlosG18/sd_dca0919/blob/main/conteudos/pwm.md)
 - [AC/DC](https://github.com/CarlosG18/sd_dca0919/blob/main/conteudos/ac_dc.md)
 

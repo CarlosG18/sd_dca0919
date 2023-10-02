@@ -8,6 +8,3 @@ repetindo.
 
 ## esquema de montagem do circuito
 
-<p align="center">
-  <img src="https://github.com/CarlosG18/sd_dca0919/blob/main/examples/example7/esquema7.png" alt="esquema do circuito no arduino">
-</p>

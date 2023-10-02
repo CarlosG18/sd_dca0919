@@ -85,3 +85,7 @@ void loop(){
 com o comando `PORTD = 0x4` temos que o registrador deve carregar com `00000100`, ou seja, o pino 2 será escrito com o `HIGH`. esse comando em alto nivel é o equivalente ao `digitalWrite(2, HIGH)`. para fazer o pino 'apagar', basta carregar o registrador D com zeros `PORTD = 0x0`.
 
 A mesma lógica é aplicada para o led amarelo e verde.
+
+[link para a simulação no tinkercad](https://www.tinkercad.com/things/7NnplZdGgMD-led-for-registers)
+
+

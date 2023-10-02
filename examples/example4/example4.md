@@ -11,3 +11,4 @@ um display de 7 segmentos para apresentar a contagem.
 <p align="center">
   <img src="https://github.com/CarlosG18/sd_dca0919/blob/main/examples/example4/esquema4.png" alt="esquema do circuito no arduino">
 </p>
+
