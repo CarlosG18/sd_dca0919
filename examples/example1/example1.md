@@ -43,7 +43,7 @@ a ideia inicial do código é simples:
 para determinar no codigo os pinos dos registradores que são os correspondentes a pinagem do arduino, devemos análisar o [datasheet do arduino uno](https://docs.arduino.cc/hardware/uno-rev3) e observar seu pinout. podemos observar na imagem abaixo:
 
 <p align="center">
-  <img src="https://github.com/CarlosG18/sd_dca0919/blob/main/exemples/exemple1/pinout_uno.png" alt="pinout do arduino uno">
+  <img src="https://github.com/CarlosG18/sd_dca0919/blob/main/examples/example1/pinout_uno.png" alt="pinout do arduino uno">
 </p>
 
 ao analisarmos o esquema de montagem do circuito, podemos ver que os pinos digitais (2,3,4) foram usados para conectar os leds (vermelho, amarelo e verde) respectivamente. 
