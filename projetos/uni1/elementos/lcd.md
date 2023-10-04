@@ -11,7 +11,7 @@ observações para o LCD:
 
 As instruções do LCD são encontradas no datasheet do LCD que você estiver usando. temos um exemplo da lista de instruções do LCD 1602.
 
-!(lista de comandos do LCD 1602)[https://github.com/CarlosG18/sd_dca0919/blob/main/imagens/lista_comandos_lcd.png]
+![lista de comandos do LCD 1602](https://github.com/CarlosG18/sd_dca0919/blob/main/imagens/lista_comandos_lcd.png)
 
 ## código do LCD (16x2)
 
@@ -98,4 +98,4 @@ for(;;){}
 
 ## montagem do circuito 
 
-(circuito)[https://github.com/CarlosG18/sd_dca0919/blob/main/imagens/circuito_lcd.png]
+![circuito](https://github.com/CarlosG18/sd_dca0919/blob/main/imagens/circuito_lcd.png)
