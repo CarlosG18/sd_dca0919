@@ -4,8 +4,7 @@
 #include <util/delay.h> //biblioteca para o uso das rotinas de _delay_ms e _delay_us()
 #include <avr/pgmspace.h>//para a gravação de dados na memória flash
 #include <avr/interrupt.h>
-#include <math.h>
-#include <DHT.h>
+#include "DHT.h"
 
 //Definições de macros para o trabalho com bits
 #define set_bit(y,bit) (y|=(1<<bit)) //coloca em 1 o bit x da variável Y
@@ -13,7 +12,8 @@
 #define cpl_bit(y,bit) (y^=(1<<bit)) //troca o estado lógico do bit x da variável Y
 #define tst_bit(y,bit) (y&(1<<bit)) //retorna 0 ou 1 conforme leitura do bit
 #define DHTPIN 2     // Digital pin connected to the DHT sensor
-#define DHTTYPE DHT11   // DHT 11
+#define DHTTYPE DHT22  // DHT 22
+#define LED PE5
 
 #define DADOS_LCD PORTH//4 bits de dados do LCD no PORTH
 #define CONTR_LCD PORTB//PORT com os pinos de controle do LCD (pino R/W em 0).
@@ -25,20 +25,27 @@
 
 const int numbers[] = {0x30,0x31,0x32,0x33,0x34,0x35,0x36,0x37,0x38,0x39};
 int temp[4] = {0,0,0,0};
+int temp_sensor[2] = {0,0};
 int umid[4] = {0,0,0,0};
+int umid_sensor[2] = {0,0};
 int hora[4] = {0,0,0,0};
 
 int mode = 0;
 
 bool troca_config = false;
 bool add_position = false;
+bool update_display = false;
 bool add_value = false;
 
 int colunas_edit[4] = {5,6,8,9};
 int col_atual = 0;
-
 int temperatura = 0;
 int vetor_temp[5] = {0,0,0,0,0};
+
+int segundos = 0;
+
+float h;
+float t;
 
 DHT dht(DHTPIN, DHTTYPE);
 
@@ -108,18 +115,23 @@ void decoder_number(int number, int col, bool jump){
 
 void select_mode(int mode){
   if(mode == 0){
-    escreve_LCD("temp:00 umid:00%");
+    escreve_LCD("t=");
+    decoder_number(temp_sensor[0],0,false);
+    decoder_number(temp_sensor[1],0,false);
+    escreve_LCD("        u=");
+    decoder_number(umid_sensor[0],0,false);
+    decoder_number(umid_sensor[1],0,false);
     pular_linha();
     escreve_LCD("--hora: ");
-    go_lin_col(1,8);
+    //go_lin_col(1,8);
     decoder_number(hora[0],0,false);
     decoder_number(hora[1],0,false);
-    go_lin_col(1,10);
+    //go_lin_col(1,10);
     escreve_LCD(":");
-    go_lin_col(1,11);
+    //go_lin_col(1,11);
     decoder_number(hora[2],0,false);
     decoder_number(hora[3],0,false);
-    go_lin_col(1,13);
+    //go_lin_col(1,13);
     escreve_LCD("---");
   }else if(mode == 1){
     escreve_LCD(" faixa de temp:");
@@ -173,94 +185,88 @@ void select_mode(int mode){
     escreve_LCD("     ");
     go_lin_col(1,5);
   }
-}
+}//modo de configuração do tempo de amostragem
 
-bool checkset_hora(int hora[4]){
-  return true;
-}
-
-void get_sensor(){
-  
-	set_bit(ADCSRA, ADSC); //inicia a conversão
-	while(tst_bit(ADCSRA,ADSC));//espera a conversão ser finalizada
-  temperatura = ADC;
-
-  //return (ADC - Offset_temp);//fator k de divisão = 1
-}
-
-void vect_temp(){
-  for(int i = 0; i < 5; i++){
-    vetor_temp[i] = temperatura;
-    //Serial.println(vetor_temp[i]);
+void Get_num(float n, int vetor[4]){
+  int base = int(n);
+  for(int i=1; i>=0; i--){
+    vetor[i] = base % 10;
+    base = base / 10;
   }
 }
 
-int main()
-{
-Serial.begin(9600);
-dht.begin();
+void atualizar_hora(){
+  if((hora[3] + 1) > 9){
+    if(hora[2] == 5){
+      if(hora[0] == 2 & (hora[1]+1) > 3){
+        hora[0] = 0; 
+        hora[1] = 0;
+        hora[2] = 0;
+        hora[3] = 0;
+      }else if((hora[1]+1) > 9){
+        hora[0] = hora[0] + 1;
+        hora[1] = 0;
+        hora[2] = 0;
+        hora[3] = 0;
+      }else{
+        hora[1] = hora[1] + 1;
+        hora[2] = 0;
+        hora[3] = 0;
+      }
+    }else{
+      hora[2] = hora[2] + 1;
+      hora[3] = 0;
+    }
+  }else{
+    hora[3] = hora[3] + 1;
+  }
+  limpar_LCD();
+  select_mode(mode);
+}
 
-DDRH = 0xFF; //PORTH como saída - dados do lcd
-DDRB = 0xFF; //PORTB como saída - controle do lcd
-DDRD = 0x0;
-DDRF = 0x0;
+void setup(){
+  Serial.begin(9600);
+  dht.begin();
 
-/*
-//configurações do contador do relogio
-TCCR1A = 0b11000000;
-TCCR1B = 0b00001001;
-//OCR1A = 0b0011110100001000;
-//TIMSK1 = 0b00000001;
-*/
-//TCNT1H and TCNT1L
+  DDRH = 0xFF; //PORTH como saída - dados do lcd
+  DDRB = 0xFF; //PORTB como saída - controle do lcd
+  DDRD = 0x0;
+  DDRF = 0x0;
 
-//configuração das interrupções
-EICRA = 0b000111111;
-EIMSK = 0b000000111;
-sei();
+  // configuração do temporizador do sensor
+  TCCR1A = 0; // Configurar TCCR1A para o modo normal (nenhuma alteração necessária)
+  TCCR1B = (1 << CS12) | (1 << CS10); // Configurar o prescaler para 1024
+  TCNT1 = 0;   // Configurar o valor inicial de TCNT1 para 0
+  OCR1A = 31249; // 16 MHz / (1024 * 1) - 1 = 15624
+  TIMSK1 |= (1 << OCIE1A); // Habilitar a interrupção de comparação A
+  
+  // configuração do temporizador do relogio
+  TCCR3A = 0;
+  TCCR3B = (1 << CS32) | (1 << CS30);
+  TCNT3 = 0;
+  OCR3A = 62499;
+  TIMSK3 |= (1 << OCIE3A);
 
-inic_LCD_4bits();
-
-select_mode(mode);
-//get_sensor();
-
-_delay_ms(2000);
-
-  // Reading temperature or humidity takes about 250 milliseconds!
-  // Sensor readings may also be up to 2 seconds 'old' (its a very slow sensor)
-//float h = dht.readHumidity();
-  // Read temperature as Celsius (the default)
-  //float t = dht.readTemperature();
-  // Read temperature as Fahrenheit (isFahrenheit = true)
-  //float f = dht.readTemperature(true);
-
-  //Serial.println(h);
-  // Check if any reads failed and exit early (to try again).
-  //if (isnan(h) || isnan(t) || isnan(f)) {
-    //Serial.println(F("Failed to read from DHT sensor!"));
-    //return;
-  //}
-
-  // Compute heat index in Fahrenheit (the default)
-  //float hif = dht.computeHeatIndex(f, h);
-  // Compute heat index in Celsius (isFahreheit = false)
-  //float hic = dht.computeHeatIndex(t, h, false);
-
-  //Serial.print(F("Humidity: "));
-  //Serial.print(h);
-  //Serial.print(F("%  Temperature: "));
-  //Serial.print(t);
-  //Serial.print(F("°C "));
-  //Serial.print(f);
-  //Serial.print(F("°F  Heat index: "));
-  //Serial.print(hic);
-  //Serial.print(F("°C "));
-  //Serial.print(hif);
-  //Serial.println(F("°F"));
-
-for(;;){
   
 
+  //configuração das interrupções
+  EICRA = 0b000111111;
+  EIMSK = 0b000000111;
+  sei();
+
+  inic_LCD_4bits();
+  escreve_LCD("iniciando...");
+
+  _delay_ms(2000);
+  limpar_LCD();
+  h = dht.readHumidity();
+  t = dht.readTemperature();
+  Get_num(t, temp_sensor);
+  Get_num(h, umid_sensor);
+  select_mode(mode);
+}
+
+void loop(){
   if(troca_config){
     if((mode+1) > 3){
       mode = 0;
@@ -316,8 +322,6 @@ for(;;){
   }
 }
 
-}
-
 ISR(INT0_vect){// editar o numero
   if(mode != 0){
     add_value = true;
@@ -334,7 +338,26 @@ ISR(INT2_vect){ //selecionar o numero para editar
   }
 }
 
-/*
-ISR(TIMER1_OVF_vect){
-  Serial.println("ok");
-}*/
+ISR(TIMER1_COMPA_vect) {
+  h = dht.readHumidity();
+  t = dht.readTemperature();
+  Get_num(t, temp_sensor);
+  Get_num(h, umid_sensor);
+  if(mode == 0){
+    limpar_LCD();
+    select_mode(mode);
+  }
+  //update_display = true;
+  TCNT1 = 0;
+}
+
+ISR(TIMER3_COMPA_vect){
+  if(mode != 3){
+    segundos = segundos + 1;
+  }
+  if(segundos == 15){
+    atualizar_hora();
+    segundos = 0;
+  }
+  TCNT3 = 0;
+}
