@@ -10,7 +10,9 @@
 #define set_bit(y,bit) (y|=(1<<bit)) //coloca em 1 o bit x da variável Y
 #define clr_bit(y,bit) (y&=~(1<<bit)) //coloca em 0 o bit x da variável Y
 #define DHTPIN 2     // Digital pin connected to the DHT sensor
-#define DHTTYPE DHT11   // DHT 11
+#define DHTTYPE DHT22  // DHT 22
+#define LED PE5
+#define BUZZER 4
 
 #define DADOS_LCD PORTH//4 bits de dados do LCD no PORTH
 #define CONTR_LCD PORTB//PORT com os pinos de controle do LCD (pino R/W em 0).
@@ -30,6 +32,7 @@ int index_current = 0;
 
 const int numbers[] = {0x30,0x31,0x32,0x33,0x34,0x35,0x36,0x37,0x38,0x39};
 int temp[4] = {0,0,0,0};
+int temp_sensor[3] = {0,0,0};
 int umid[4] = {0,0,0,0};
 int umid_sensor[2] = {0,0};
 int hora[4] = {0,0,0,0};
@@ -56,6 +59,13 @@ int colunas_edit_amostra[4] = {5,6,7,8};
 int col_atual = 0;
 int temperatura = 0;
 int vetor_temp[5] = {0,0,0,0,0};
+
+int segundos = 0;
+
+float h;
+float t;
+
+uint16_t sensor_fogo;
 
 DHT dht(DHTPIN, DHTTYPE);
 
@@ -125,18 +135,22 @@ void decoder_number(int number, int col, bool jump){
 
 void select_mode(int mode){
   if(mode == 0){
-    escreve_LCD("temp:00 umid:00%");
+    escreve_LCD("t=");
+    decoder_number(temp_sensor[0],0,false);
+    decoder_number(temp_sensor[1],0,false);
+    escreve_LCD(".");
+    decoder_number(temp_sensor[2],0,false);
+    escreve_LCD(" C   u=");
+    decoder_number(umid_sensor[0],0,false);
+    decoder_number(umid_sensor[1],0,false);
+    escreve_LCD("%");
     pular_linha();
     escreve_LCD("--hora: ");
-    go_lin_col(1,8);
     decoder_number(hora[0],0,false);
     decoder_number(hora[1],0,false);
-    go_lin_col(1,10);
     escreve_LCD(":");
-    go_lin_col(1,11);
     decoder_number(hora[2],0,false);
     decoder_number(hora[3],0,false);
-    go_lin_col(1,13);
     escreve_LCD("---");
   }else if(mode == 1){
     escreve_LCD(" faixa de temp:");
@@ -258,53 +272,185 @@ void att_Data(int vetor[4], int type){
     umid_min = Get_data(vetor[0],vetor[1]);
     umid_max = Get_data(vetor[2],vetor[3]);
   }
-}//modo de configuração do tempo de amostragem
+}
 
-void Get_num(float n, int vetor[4]){
-  int base = int(n);
-  for(int i=1; i>=0; i--){
-    vetor[i] = base % 10;
-    base = base / 10;
+bool check_parametros(uint16_t sensor){
+  if(sensor > 777){
+    return true;
+  }else{
+    return false;
   }
 }
 
-bool checkset_hora(int hora[4]){
-  return true;
+/*
+bool check_parametros(float temperatura_sensor, float umidade_sensor){
+  int temp_ajust_min = Get_data(temp[0],temp[1]);
+  int temp_ajust_max = Get_data(temp[2],temp[3]);
+  int umid_ajust_min = Get_data(umid[0],umid[1]);
+  int umid_ajust_max = Get_data(umid[2],umid[3]);
+
+  if(int(temperatura_sensor) < temp_ajust_min | int(temperatura_sensor) > temp_ajust_max | int(umidade_sensor) < umid_ajust_min | int(umidade_sensor) > umid_ajust_max){
+    return true;
+  }else{
+    return false;
+  }
+}*/
+
+void verify_addValue(int lim_min, int lim_max, int vetor[4],int type){
+  att_Data(vetor,type);
+  int dez_min = int(lim_min/10);
+  int uni_min = lim_min % 10;
+  int dez_max = int(lim_max/10);
+  int uni_max = lim_max % 10;
+
+  if(col_atual == 0){
+    if((vetor[col_atual]+1) > dez_max){
+      vetor[col_atual] = dez_min;
+    }else{
+      vetor[col_atual] = vetor[col_atual] + 1;
+      if(vetor[col_atual] == dez_max & vetor[1] > 0){
+        vetor[1] = uni_min;
+        go_lin_col(1,colunas_edit[1]);
+        decoder_number(vetor[1],colunas_edit[col_atual],true);
+      }
+      att_Data(vetor,type);
+      if(type == 1){
+        if(temp_min > temp_max){
+        vetor[2] = vetor[col_atual];
+        go_lin_col(1,colunas_edit[2]);
+        decoder_number(vetor[2],colunas_edit[col_atual],true);
+        vetor[3] = vetor[col_atual+1];
+        go_lin_col(1,colunas_edit[3]);
+        decoder_number(vetor[3],colunas_edit[col_atual],true);
+        }
+      }else{
+        if(umid_min > umid_max){
+        vetor[2] = vetor[col_atual];
+        go_lin_col(1,colunas_edit[2]);
+        decoder_number(vetor[2],colunas_edit[col_atual],true);
+        vetor[3] = vetor[col_atual+1];
+        go_lin_col(1,colunas_edit[3]);
+        decoder_number(vetor[3],colunas_edit[col_atual],true);
+        }
+      }
+      
+    }
+  }else if(col_atual == 1){
+    if(vetor[col_atual-1] == dez_min & (vetor[col_atual]+1) > 9){
+      vetor[col_atual] = uni_min;
+    }else if((vetor[col_atual]+1) > 9){
+      vetor[col_atual] = 0;
+    }else{
+      vetor[col_atual] = vetor[col_atual] + 1;
+      att_Data(vetor,type);
+      if(type == 1){
+        if(temp_min > temp_max){
+          vetor[3] = vetor[col_atual];
+          decoder_number(vetor[3],colunas_edit[3],true);
+        }
+      }else{
+        if(umid_min > umid_max){
+          vetor[3] = vetor[col_atual];
+          decoder_number(vetor[3],colunas_edit[3],true);
+        }
+      }
+    }
+  }else if(col_atual == 2){
+    if((vetor[col_atual]+1) > dez_max){
+      vetor[col_atual] = dez_min;
+      att_Data(vetor,type);
+      if(type == 1){
+        if(temp_max < temp_min){
+          vetor[0] = vetor[2];
+          go_lin_col(1,colunas_edit[0]);
+          decoder_number(vetor[0],colunas_edit[col_atual],true);
+          vetor[1] = vetor[3];
+          go_lin_col(1,colunas_edit[1]);
+          decoder_number(vetor[1],colunas_edit[col_atual],true);
+        }
+      }else{
+        if(umid_max < umid_min){
+          vetor[0] = vetor[2];
+          go_lin_col(1,colunas_edit[0]);
+          decoder_number(vetor[0],colunas_edit[col_atual],true);
+          vetor[1] = vetor[3];
+          go_lin_col(1,colunas_edit[1]);
+          decoder_number(vetor[1],colunas_edit[col_atual],true);
+        }
+      }
+    }else{
+      vetor[col_atual] = vetor[col_atual] + 1;
+      if(vetor[col_atual] == dez_max & vetor[3] > uni_max){
+        vetor[3] = 0;
+        go_lin_col(1,colunas_edit[3]);
+        decoder_number(vetor[3],colunas_edit[col_atual],true);
+      }
+    }
+  }else if(col_atual == 3){
+    if((vetor[col_atual]+1) > 9 | vetor[col_atual-1] == dez_max){
+      vetor[col_atual] = 0;
+    }else{
+      vetor[col_atual] = vetor[col_atual] + 1;
+    }
+  }
+  decoder_number(vetor[col_atual],colunas_edit[col_atual],true);
 }
 
-void get_sensor(){
+unsigned int get_time_full(){
+  uint16_t time_full = 0;
+  uint16_t escala = 0;
+  time_full = time_full + (static_cast<uint16_t>(temp_amostra[0]) * 1000);
+  time_full = time_full + (static_cast<uint16_t>(temp_amostra[1]) * 100);
+  time_full = time_full + (static_cast<uint16_t>(temp_amostra[2]) * 10);
+  time_full = time_full + (static_cast<uint16_t>(temp_amostra[3]) * 1);
+  escala = ((125*time_full)/8) - 1;
   
-	set_bit(ADCSRA, ADSC); //inicia a conversão
-	while(tst_bit(ADCSRA,ADSC));//espera a conversão ser finalizada
-  temperatura = ADC;
-
-  //return (ADC - Offset_temp);//fator k de divisão = 1
+  return escala;
 }
 
-void vect_temp(){
-  for(int i = 0; i < 5; i++){
-    vetor_temp[i] = temperatura;
-    //Serial.println(vetor_temp[i]);
-  }
+uint16_t read_poten(){
+  ADCSRA |= (1 << ADSC);
+  while(ADCSRA & (1 << ADSC));
+  return ADC;
+}
+
+void config_temp_amostra(int value){
+  //configuração do temporiador para a amostragem
+  TCCR4A = 0;
+  TCCR4B = (1 << CS42) | (1 << CS40);
+  TCNT4 = 0;
+  OCR4A = value;
+  TIMSK4 |= (1 << OCIE4A);
 }
 
 void setup(){
   Serial.begin(9600);
   dht.begin();
 
-DDRH = 0xFF; //PORTH como saída - dados do lcd
-DDRB = 0xFF; //PORTB como saída - controle do lcd
-DDRD = 0x0;
-DDRF = 0x0;
+  DDRH = 0xFF; //PORTH como saída - dados do lcd
+  DDRB = 0xFF; //PORTB como saída - controle do lcd
+  DDRD = 0x0;
+  DDRF = 0x0;
+  DDRE = 0b00100000;
+  DDRG = 0b00100000;
 
-/*
-//configurações do contador do relogio
-TCCR1A = 0b11000000;
-TCCR1B = 0b00001001;
-//OCR1A = 0b0011110100001000;
-//TIMSK1 = 0b00000001;
-*/
-//TCNT1H and TCNT1L
+  //configurações do ADC - potenciometro relacionado ao sensor de incendio
+  ADMUX |= (1 << REFS0);
+  ADCSRA |= (1 << ADEN) | (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0); //prescale 1024
+
+  // configuração do temporizador do sensor
+  TCCR1A = 0; // Configurar TCCR1A para o modo normal (nenhuma alteração necessária)
+  TCCR1B = (1 << CS12) | (1 << CS10); // Configurar o prescaler para 1024
+  TCNT1 = 0;   // Configurar o valor inicial de TCNT1 para 0
+  OCR1A = 31249; // 16 MHz / (1024 * 1) - 1 = 15624
+  TIMSK1 |= (1 << OCIE1A); // Habilitar a interrupção de comparação A
+  
+  // configuração do temporizador do relogio
+  TCCR3A = 0;
+  TCCR3B = (1 << CS32) | (1 << CS30);
+  TCNT3 = 0;
+  OCR3A = 62499;
+  TIMSK3 |= (1 << OCIE3A);
 
   //configuração das interrupções
   EICRA = 0b000111111;
@@ -314,43 +460,14 @@ TCCR1B = 0b00001001;
   inic_LCD_4bits();
   escreve_LCD("iniciando...");
 
-_delay_ms(2000);
+  _delay_ms(2000);
+  limpar_LCD();
+  t = dht.readTemperature();
+  Get_num(t, temp_sensor);
+  select_mode(mode);
+}
 
-  // Reading temperature or humidity takes about 250 milliseconds!
-  // Sensor readings may also be up to 2 seconds 'old' (its a very slow sensor)
-//float h = dht.readHumidity();
-  // Read temperature as Celsius (the default)
-  //float t = dht.readTemperature();
-  // Read temperature as Fahrenheit (isFahrenheit = true)
-  //float f = dht.readTemperature(true);
-
-  //Serial.println(h);
-  // Check if any reads failed and exit early (to try again).
-  //if (isnan(h) || isnan(t) || isnan(f)) {
-    //Serial.println(F("Failed to read from DHT sensor!"));
-    //return;
-  //}
-
-  // Compute heat index in Fahrenheit (the default)
-  //float hif = dht.computeHeatIndex(f, h);
-  // Compute heat index in Celsius (isFahreheit = false)
-  //float hic = dht.computeHeatIndex(t, h, false);
-
-  //Serial.print(F("Humidity: "));
-  //Serial.print(h);
-  //Serial.print(F("%  Temperature: "));
-  //Serial.print(t);
-  //Serial.print(F("°C "));
-  //Serial.print(f);
-  //Serial.print(F("°F  Heat index: "));
-  //Serial.print(hic);
-  //Serial.print(F("°C "));
-  //Serial.print(hif);
-  //Serial.println(F("°F"));
-
-for(;;){
-  
-
+void loop(){
   if(troca_config){
     if((mode+1) > 4){
       mode = 0;
@@ -407,8 +524,16 @@ for(;;){
     }
     add_value = false;
   }
-}
 
+  if(alarm_active){
+    alarm();
+  }
+
+  if(init_capture){
+    temp_amostra_full = get_time_full();
+    config_temp_amostra(temp_amostra_full);
+    init_capture = false;
+  }
 }
 
 ISR(INT0_vect){// editar o numero
@@ -427,7 +552,55 @@ ISR(INT2_vect){ //selecionar o numero para editar
   }
 }
 
-/*
-ISR(TIMER1_OVF_vect){
-  Serial.println("ok");
-}*/
+ISR(TIMER1_COMPA_vect) {
+  h = dht.readHumidity();
+  t = dht.readTemperature();
+  Get_num(t, temp_sensor);
+  Get_num(h, umid_sensor);
+  if(mode == 0){
+    limpar_LCD();
+    select_mode(mode);
+  }
+  clr_bit(PORTE,LED);
+  sensor_fogo = read_poten();
+  alarm_active = check_parametros(sensor_fogo);
+  TCNT1 = 0;
+}
+
+ISR(TIMER3_COMPA_vect){//timer do relogio
+  if(mode != 3){
+    segundos = segundos + 1;
+  }
+  if(segundos == 15){
+    atualizar_hora();
+    segundos = 0;
+  }
+  TCNT3 = 0;
+}
+
+ISR(TIMER4_COMPA_vect){//timer do tempo de amostragem
+  Serial.println();
+  h = dht.readHumidity();
+  t = dht.readTemperature();
+  data_sensor[index_current].temperatura = t;
+  data_sensor[index_current].umidade = h;
+  if(index_current + 1 > 10){
+    index_current = 0;
+    TCCR4B = 0;
+  }else{
+    index_current = index_current + 1;
+    print_data();
+  }
+  TCNT4 = 0;
+}
+
+void print_data(){
+  for(int i=0; i<index_current; i++){
+    Serial.print("aferição[");
+    Serial.print(i);
+    Serial.print("] t = ");
+    Serial.print(data_sensor[i].temperatura);
+    Serial.print(" u = ");
+    Serial.println(data_sensor[i].umidade);
+  }
+}
