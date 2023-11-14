@@ -9,6 +9,7 @@ implementações realizada na disciplina de sistemas digitais - DCA0919 - Engenh
 - [Temporizadores e contadores](https://github.com/CarlosG18/sd_dca0919/blob/main/conteudos/contador_temp.md)
 - [PWM](https://github.com/CarlosG18/sd_dca0919/blob/main/conteudos/pwm.md)
 - [AC/DC](https://github.com/CarlosG18/sd_dca0919/blob/main/conteudos/ac_dc.md)
+- [Comunicação Serial](https://github.com/CarlosG18/sd_dca0919/blob/main/conteudos/protocolos_serial.md)
 
 ## exemplos práticos: 
 - [Acender 3 leds](https://github.com/CarlosG18/sd_dca0919/blob/main/examples/example1/example1.md)
@@ -22,3 +23,5 @@ implementações realizada na disciplina de sistemas digitais - DCA0919 - Engenh
 ## Projetos 
 
 - [Projeto unidade 1 - Monitoramento ambiental](https://github.com/CarlosG18/sd_dca0919/blob/main/projetos/uni1/projeto.md)
+
+- [Projeto unidade 2 - Wakeup!](https://github.com/CarlosG18/sd_dca0919/blob/main/projetos/uni2/projeto.md)

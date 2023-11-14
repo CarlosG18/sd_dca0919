@@ -1,0 +1,1 @@
+# Protocolo de comunicação Serial I2C
