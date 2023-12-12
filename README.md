@@ -25,3 +25,5 @@ implementações realizada na disciplina de sistemas digitais - DCA0919 - Engenh
 - [Projeto unidade 1 - Monitoramento ambiental](https://github.com/CarlosG18/sd_dca0919/blob/main/projetos/uni1/projeto.md)
 
 - [Projeto unidade 2 - Wakeup!](https://github.com/CarlosG18/sd_dca0919/blob/main/projetos/uni2/projeto.md)
+
+- [Projeto da unidade 3 - FPGA](https://github.com/CarlosG18/sd_dca0919/blob/main/projetos/uni3/projeto.md)
